@@ -1,5 +1,6 @@
 package com.shaquille.tmdbclient.presentation.di.core
 
+import com.shaquille.tmdbclient.BuildConfig
 import com.shaquille.tmdbclient.data.api.TMDBService
 import com.shaquille.tmdbclient.data.repository.artist.datasource.ArtistRemoteDatasource
 import com.shaquille.tmdbclient.data.repository.artist.datasourceImpl.ArtistRemoteDataSourceImpl
@@ -9,15 +10,18 @@ import com.shaquille.tmdbclient.data.repository.tvshow.datasource.TvShowRemoteDa
 import com.shaquille.tmdbclient.data.repository.tvshow.datasourceImpl.TvShowRemoteDataSourceImpl
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
-class RemoteDataModule(private val apiKey: String) {
+@InstallIn(SingletonComponent::class)
+class RemoteDataModule {
     @Singleton
     @Provides
     fun provideMovieRemoteDataSource(tmdbService: TMDBService): MovieRemoteDatasource {
         return MovieRemoteDataSourceImpl(
-            tmdbService, apiKey
+            tmdbService, BuildConfig.API_KEY
         )
     }
 
@@ -25,7 +29,7 @@ class RemoteDataModule(private val apiKey: String) {
     @Provides
     fun provideTvRemoteDataSource(tmdbService: TMDBService): TvShowRemoteDatasource {
         return TvShowRemoteDataSourceImpl(
-            tmdbService, apiKey
+            tmdbService, BuildConfig.API_KEY
         )
     }
 
@@ -33,7 +37,7 @@ class RemoteDataModule(private val apiKey: String) {
     @Provides
     fun provideArtistRemoteDataSource(tmdbService: TMDBService): ArtistRemoteDatasource {
         return ArtistRemoteDataSourceImpl(
-            tmdbService, apiKey
+            tmdbService, BuildConfig.API_KEY
         )
     }
 
