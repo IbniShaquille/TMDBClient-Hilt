@@ -14,9 +14,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.shaquille.tmdbclient.R
 import com.shaquille.tmdbclient.databinding.ActivityMovieBinding
-import com.shaquille.tmdbclient.presentation.di.Injector
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class MovieActivity : AppCompatActivity() {
     @Inject
     lateinit var factory: MovieViewModelFactory
@@ -26,10 +27,7 @@ class MovieActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_movie)
-        (application as Injector).createMovieSubComponent()
-            .inject(this)
-        movieViewModel = ViewModelProvider(this, factory)
-            .get(MovieViewModel::class.java)
+        movieViewModel = ViewModelProvider(this, factory)[MovieViewModel::class.java]
         val responseLiveData = movieViewModel.getMovies()
         responseLiveData.observe(this, Observer {
             Log.i("MYTAG", it.toString())
@@ -73,20 +71,21 @@ class MovieActivity : AppCompatActivity() {
                 updateMovies()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
 
     }
 
-    private fun updateMovies(){
+    private fun updateMovies() {
         binding.movieProgressBar.visibility = View.VISIBLE
         val response = movieViewModel.updateMovies()
         response.observe(this, Observer {
-            if(it!=null){
+            if (it != null) {
                 adapter.setList(it)
                 adapter.notifyDataSetChanged()
                 binding.movieProgressBar.visibility = View.GONE
-            }else{
+            } else {
                 binding.movieProgressBar.visibility = View.GONE
             }
         })
